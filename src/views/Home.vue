@@ -6,33 +6,33 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue';
 
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-  name: "home",
+  name: 'home',
   data() {
     return {
-      todolist: []
+      todolist: [],
     };
   },
 
   methods: {
     getTodoList() {
-      const path = "http://localhost:5000/todolist";
+      const path = 'http://localhost:5000/todolist';
 
       axios
         .get(path)
-        .then(result => {
+        .then((result) => {
           this.todolist = result.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
-    }
+    },
   },
 
   created() {
     this.getTodoList();
-  }
+  },
 };
 </script>
