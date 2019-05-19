@@ -104,7 +104,7 @@
           label-for="form-author-edit-input"
         >
           <b-form-textarea
-            id="form-description-new-textarea"
+            id="form-description-edit-textarea"
             v-model="task.description"
             placeholder="Enter description"
           ></b-form-textarea>
