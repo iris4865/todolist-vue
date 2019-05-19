@@ -11,7 +11,7 @@
       <table class="table table-hover">
         <tbody>
         <tr v-for="(todo) in todolist" :key="todo.id" scope="row" v-bind:class="{'table-danger': isExpire(todo.end_date, todo.complete)}">
-          <td class="text-left {}"
+          <td class="text-left"
               v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}" >{{ todo.title }}</td>
           <td class="text-right"
               v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}">{{ todo.end_date }}</td>
