@@ -9,24 +9,37 @@
     <hr>
     <b-row>
       <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">End Date</th>
+            <th scope="col">Buttons</th>
+          </tr>
+        </thead>
         <tbody>
-        <tr v-for="(todo) in todolist" :key="todo.id" scope="row" v-bind:class="{'table-danger': isExpire(todo.end_date, todo.complete)}">
-          <td class="text-left"
-              v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}" >{{ todo.title }}</td>
-          <td class="text-right"
-              v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}">{{ todo.end_date }}</td>
-          <td class="text-right">
-            <b-button v-on:click="deleteTask(todo.id)" variant="info" style="margin: 1px">▲</b-button>
-            <b-button v-on:click="deleteTask(todo.id)" variant="info" style="margin: 1px">▼</b-button>
-            <b-button
-              v-b-modal.update-task-modal
-              v-on:click="editTask(todo)"
-              variant="warning"
-              style="margin: 1px"
-            >Edit</b-button>
-            <b-button v-on:click="deleteTask(todo.id)" variant="danger">Delete</b-button>
-          </td>
-        </tr>
+          <tr v-for="(todo) in todolist" :key="todo.id" v-bind:class="{'table-danger': isExpire(todo.end_date, todo.complete)}" >
+            <td
+                v-bind:class="{'isComplete': todo.complete, 
+                              'table-danger': isExpire(todo.end_date, todo.complete)}"
+            >{{ todo.title }}</td>
+
+            <td style="width: 200px"
+                v-bind:class="{'isComplete': todo.complete, 
+                              'table-danger': isExpire(todo.end_date, todo.complete)}"
+            >{{ todo.end_date }}</td>
+
+            <td style="width: 250px">
+              <b-button v-on:click="upTask(todo.id)" variant="info" style="margin: 1px">▲</b-button>
+              <b-button v-on:click="downTask(todo.id)" variant="info" style="margin: 1px">▼</b-button>
+              <b-button
+                v-b-modal.update-task-modal
+                v-on:click="editTask(todo)"
+                variant="warning"
+                style="margin: 1px"
+              >Edit</b-button>
+              <b-button v-on:click="deleteTask(todo.id)" variant="danger">Delete</b-button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </b-row>
@@ -94,7 +107,6 @@
             id="form-description-edit-input"
             type="text"
             v-model="task.description"
-            required
             placeholder="Enter description"
           ></b-form-input>
         </b-form-group>
@@ -144,17 +156,7 @@ export default {
         complete: false,
       },
 
-      todolist: [
-        {
-          id: 0,
-          title: 'title1',
-          description: '1111',
-          priority: 0,
-          create_date: '2019.05.17 17:00:00',
-          end_date: '2019.05.18 17:00:00',
-          complete: true,
-        },
-      ],
+      todolist: [],
     };
   },
 
@@ -165,7 +167,7 @@ export default {
       axios
         .get(path)
         .then((result) => {
-          this.todolist = result.data;
+          this.todolist = result.data.sort((x,y) => (x.priority < y.priority) ? -1 : 1);
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -189,7 +191,15 @@ export default {
     },
 
     newTask() {
-      this.task = this.initTask();
+      this.task = {
+        id: 0,
+        title: '',
+        description: '',
+        priority: 0,
+        create_date: '',
+        end_date: '',
+        complete: false,
+      };
     },
 
     onAddTask() {
@@ -203,26 +213,38 @@ export default {
       this.addTask(payload);
     },
 
-    addTask(payload) {
-      const path = 'http://localhost:5000/api/task/';
-      axios
-        .post(path, payload)
-        .then((res) => {
-          this.getTodoList();
-          this.new_task_title = '';
-          this.message = res.data.message;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.log(error);
-          this.getTodoList();
-        });
+    upTask(id) {
+      for (let index = 1; index < this.todolist.length; index++) {
+        if (id == this.todolist[index].id) {
+          const now = this.todolist[index];
+          const prev = this.todolist[index - 1];
+          this.updateTask(now.id, { priority: prev.priority });
+          this.updateTask(prev.id, { priority: now.priority });
+          break;
+        }
+      }
+    },
 
-      this.getTodoList();
+    downTask(id) {
+      for (let index = 0; index < this.todolist.length - 1; index++) {
+        if (id == this.todolist[index].id) {
+          const now = this.todolist[index];
+          const next = this.todolist[index + 1];
+          this.updateTask(now.id, { priority: next.priority });
+          this.updateTask(next.id, { priority: now.priority });
+          break;
+        }
+      }
     },
 
     editTask(task) {
-      this.task = this.copyTask(task);
+      this.task = {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        end_date: task.end_date,
+        complete: task.complete,
+      }
     },
 
     onUpdateTask() {
@@ -236,14 +258,32 @@ export default {
       this.updateTask(this.task.id, payload);
     },
 
+    addTask(payload) {
+      const path = 'http://localhost:5000/api/task/';
+      axios
+        .post(path, payload)
+        .then((res) => {
+          this.new_task_title = '';
+          this.message = res.data.message;
+          this.getTodoList();
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.getTodoList();
+        });
+
+      this.getTodoList();
+    },
+
     updateTask(taskID, payload) {
       const path = `http://localhost:5000/api/task/${taskID}`;
       axios
         .put(path, payload)
         .then((res) => {
-          this.getTodoList();
           this.new_task_title = '';
           this.message = res.data.message;
+          this.getTodoList();
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -257,13 +297,13 @@ export default {
       axios
         .delete(path)
         .then((res) => {
-          this.getTodoList();
           this.message = res.data.message;
+          this.getTodoList();
         })
         .catch((error) => {
-          this.getTodoList();
           // eslint-disable-next-line
           console.error(error);
+          this.getTodoList();
         });
     },
 
@@ -275,28 +315,6 @@ export default {
     onResetTask() {
       this.$refs.editTaskModal.hide();
       this.getTodoList();
-    },
-
-    initTask() {
-      return {
-        id: 0,
-        title: '',
-        description: '',
-        priority: 0,
-        create_date: '',
-        end_date: '',
-        complete: false,
-      };
-    },
-
-    copyTask(task) {
-      return {
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        end_date: task.end_date,
-        complete: task.complete,
-      };
     },
   },
 
