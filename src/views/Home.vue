@@ -10,11 +10,12 @@
     <b-row>
       <table class="table">
         <tr v-for="(todo) in todolist" :key="todo.id">
-          <td class="text-left"
-              v-bind:class="{'isComplete': todo.complete}">{{ todo.title }}</td>
+          <td class="text-left {}"
+              v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}" >{{ todo.title }}</td>
           <td class="text-right"
-              v-bind:class="{'isComplete': todo.complete}">{{ todo.end_date }}</td>
-          <td class="text-right">
+              v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}">{{ todo.end_date }}</td>
+          <td class="text-right"
+              v-bind:class="{'table-danger': isExpire(todo.end_date, todo.complete)}">
             <b-button
               v-b-modal.update-task-modal
               v-on:click="editTask(todo)"
@@ -166,6 +167,21 @@ export default {
           // eslint-disable-next-line
           console.error(error);
         });
+    },
+
+    isExpire(date, isComplete) {
+      if (isComplete) {
+        return false;
+      }
+
+      const end = new Date(date);
+      const now = new Date();
+
+      if (end - now > 0) {
+        return false;
+      }
+
+      return true;
     },
 
     newTask() {
