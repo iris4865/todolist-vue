@@ -118,7 +118,6 @@
             id="form-end_date-edit-input"
             type="date"
             v-model="task.end_date"
-            required
             placeholder="Enter End Date"
           ></b-form-input>
         </b-form-group>
