@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <b-container>
     <h1 class="text-center">TodoList</h1>
     <b-button
@@ -19,12 +19,12 @@
         <tbody>
           <tr v-for="(todo) in todolist" :key="todo.id" v-bind:class="{'table-danger': isExpire(todo.end_date, todo.complete)}" >
             <td
-                v-bind:class="{'isComplete': todo.complete, 
+                v-bind:class="{'isComplete': todo.complete,
                               'table-danger': isExpire(todo.end_date, todo.complete)}"
             >{{ todo.title }}</td>
 
             <td style="width: 200px"
-                v-bind:class="{'isComplete': todo.complete, 
+                v-bind:class="{'isComplete': todo.complete,
                               'table-danger': isExpire(todo.end_date, todo.complete)}"
             >{{ todo.end_date }}</td>
 
@@ -166,7 +166,7 @@ export default {
       axios
         .get(path)
         .then((result) => {
-          this.todolist = result.data.sort((x,y) => (x.priority < y.priority) ? -1 : 1);
+          this.todolist = result.data.sort((x, y) => ((x.priority < y.priority) ? -1 : 1));
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -243,7 +243,7 @@ export default {
         description: task.description,
         end_date: task.end_date,
         complete: task.complete,
-      }
+      };
     },
 
     onUpdateTask() {
