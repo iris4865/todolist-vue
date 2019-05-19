@@ -103,12 +103,11 @@
           label="Description:"
           label-for="form-author-edit-input"
         >
-          <b-form-input
-            id="form-description-edit-input"
-            type="text"
+          <b-form-textarea
+            id="form-description-new-textarea"
             v-model="task.description"
             placeholder="Enter description"
-          ></b-form-input>
+          ></b-form-textarea>
         </b-form-group>
         <b-form-group
           id="form-end_date-edit-group"
