@@ -8,22 +8,26 @@
     >New Task</b-button>
     <hr>
     <b-row>
-      <table class="table">
-        <tr v-for="(todo) in todolist" :key="todo.id">
+      <table class="table table-hover">
+        <tbody>
+        <tr v-for="(todo) in todolist" :key="todo.id" scope="row" v-bind:class="{'table-danger': isExpire(todo.end_date, todo.complete)}">
           <td class="text-left {}"
               v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}" >{{ todo.title }}</td>
           <td class="text-right"
               v-bind:class="{'isComplete': todo.complete, 'table-danger': isExpire(todo.end_date, todo.complete)}">{{ todo.end_date }}</td>
-          <td class="text-right"
-              v-bind:class="{'table-danger': isExpire(todo.end_date, todo.complete)}">
+          <td class="text-right">
+            <b-button v-on:click="deleteTask(todo.id)" variant="info" style="margin: 1px">▲</b-button>
+            <b-button v-on:click="deleteTask(todo.id)" variant="info" style="margin: 1px">▼</b-button>
             <b-button
               v-b-modal.update-task-modal
               v-on:click="editTask(todo)"
-              class="btn btn-warning btn-sm"
+              variant="warning"
+              style="margin: 1px"
             >Edit</b-button>
-            <b-button v-on:click="deleteTask(todo.id)" class="btn btn-danger btn-sm">Delete</b-button>
+            <b-button v-on:click="deleteTask(todo.id)" variant="danger">Delete</b-button>
           </td>
         </tr>
+        </tbody>
       </table>
     </b-row>
 
