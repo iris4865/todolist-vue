@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <b-container>
     <h1 class="text-center">TodoList</h1>
     <b-button
@@ -162,7 +162,7 @@ export default {
 
   methods: {
     getTodoList() {
-      const path = 'http://localhost:5000/api/task/';
+      const path = 'api/task/';
 
       axios
         .get(path)
@@ -259,7 +259,7 @@ export default {
     },
 
     addTask(payload) {
-      const path = 'http://localhost:5000/api/task/';
+      const path = 'api/task/';
       axios
         .post(path, payload)
         .then((res) => {
@@ -277,7 +277,7 @@ export default {
     },
 
     updateTask(taskID, payload) {
-      const path = `http://localhost:5000/api/task/${taskID}`;
+      const path = `api/task/${taskID}`;
       axios
         .put(path, payload)
         .then((res) => {
@@ -293,7 +293,7 @@ export default {
     },
 
     deleteTask(taskID) {
-      const path = `http://localhost:5000/api/task/${taskID}`;
+      const path = `api/task/${taskID}`;
       axios
         .delete(path)
         .then((res) => {
