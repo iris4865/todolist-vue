@@ -24,4 +24,8 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.isComplete {
+  text-decoration: line-through;
+}
 </style>

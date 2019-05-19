@@ -10,8 +10,10 @@
     <b-row>
       <table class="table">
         <tr v-for="(todo) in todolist" :key="todo.id">
-          <td>{{ todo.title }}</td>
-          <td class="text-right">{{ todo.end_date }}</td>
+          <td class="text-left"
+              v-bind:class="{'isComplete': todo.complete}">{{ todo.title }}</td>
+          <td class="text-right"
+              v-bind:class="{'isComplete': todo.complete}">{{ todo.end_date }}</td>
           <td class="text-right">
             <b-button
               v-b-modal.update-task-modal
