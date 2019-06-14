@@ -41,7 +41,7 @@
                 ▼
               </b-button>
               <b-button
-                v-b-modal.update-task-modal
+                v-b-modal.task-modal
                 v-on:click="editTask(todo)"
                 variant="warning"
                 style="margin: 1px">Edit</b-button>
@@ -56,50 +56,6 @@
       <TaskForm v-bind:task="task"
                 @okTask="okTask"
                 @cancelTask="cancelTask"/>
-    </b-modal>
-
-    <b-modal ref="editTaskModal" id="update-task-modal" title="Update" hide-footer>
-      <b-form @submit.prevent="onUpdateTask" @reset.prevent="onResetTask" class="w-100">
-        <b-form-group id="form-title-edit-group" label="Title:" label-for="form-title-edit-input">
-          <b-form-input
-            id="form-title-edit-input"
-            type="text"
-            v-model="task.title"
-            required
-            placeholder="Enter title"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          id="form-description-edit-group"
-          label="Description:"
-          label-for="form-author-edit-input">
-          <b-form-textarea
-            id="form-description-edit-textarea"
-            v-model="task.description"
-            placeholder="Enter description"
-          ></b-form-textarea>
-        </b-form-group>
-        <b-form-group
-          id="form-end_date-edit-group"
-          label="End Date:"
-          label-for="form-author-edit-input">
-          <b-form-input
-            id="form-end_date-edit-input"
-            type="date"
-            v-model="task.end_date"
-            placeholder="Enter End Date"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-checkbox id="form-complete-checkbox"
-                         v-model="task.complete">
-          Complete Task
-        </b-form-checkbox>
-
-        <b-button-group>
-          <b-button type="submit" variant="primary">Update</b-button>
-          <b-button type="reset" variant="danger">Cancel</b-button>
-        </b-button-group>
-      </b-form>
     </b-modal>
   </b-container>
 </template>
@@ -121,7 +77,7 @@ export default {
 
       task: {
         id: 0,
-        title: '33',
+        title: '',
         description: '',
         priority: 0,
         create_date: '',
@@ -135,7 +91,7 @@ export default {
 
   methods: {
     getTodoList() {
-      const path = 'http://127.0.0.1:5000/api/task/';
+      const path = 'api/task/';
 
       axios
         .get(path)
@@ -192,6 +148,11 @@ export default {
       }
     },
 
+    cancelTask() {
+      this.$refs.taskModal.hide();
+      this.getTodoList();
+    },
+
     upTask(id) {
       for (let index = 1; index < this.todolist.length; index += 1) {
         if (id === this.todolist[index].id) {
@@ -226,19 +187,8 @@ export default {
       };
     },
 
-    onUpdateTask() {
-      this.$refs.editTaskModal.hide();
-      const payload = {
-        title: this.task.title,
-        description: this.task.description,
-        end_date: this.task.end_date,
-        complete: this.task.complete,
-      };
-      this.updateTask(this.task.id, payload);
-    },
-
     addTask(payload) {
-      const path = 'http://127.0.0.1:5000/api/task/';
+      const path = 'api/task/';
       axios
         .post(path, payload)
         .then((res) => {
@@ -256,7 +206,7 @@ export default {
     },
 
     updateTask(taskID, payload) {
-      const path = `http://127.0.0.1:5000/api/task/${taskID}`;
+      const path = `api/task/${taskID}`;
       axios
         .put(path, payload)
         .then((res) => {
@@ -272,7 +222,7 @@ export default {
     },
 
     deleteTask(taskID) {
-      const path = `http://127.0.0.1:5000/api/task/${taskID}`;
+      const path = `api/task/${taskID}`;
       axios
         .delete(path)
         .then((res) => {
@@ -284,16 +234,6 @@ export default {
           console.error(error);
           this.getTodoList();
         });
-    },
-
-    cancelTask() {
-      this.$refs.taskModal.hide();
-      this.getTodoList();
-    },
-
-    onResetTask() {
-      this.$refs.editTaskModal.hide();
-      this.getTodoList();
     },
   },
 
